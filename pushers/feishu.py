@@ -1,55 +1,44 @@
-﻿"""飞书机器人推送 — 按板块分组"""
+"""飞书推送 — 四大板块"""
 
 import httpx
 from crawlers.base import NewsItem
 
+CATS = ["世界要闻", "科技前沿", "金融财经", "综合"]
 
 class FeishuPusher:
     def __init__(self, webhook: str):
         self.webhook = webhook
 
-    async def push(self, items: list[NewsItem], title: str = "📰 今日新闻推送"):
+    async def push(self, items: list[NewsItem], title: str = ""):
         if not items or not self.webhook:
             return
-
-        categories = ["科技", "金融", "综合"]
         lines = [title, ""]
-        global_idx = 0
-
-        for cat in categories:
-            cat_items = [it for it in items if it.category == cat]
-            if not cat_items:
+        idx = 0
+        for cat in CATS:
+            ci = [it for it in items if it.category == cat]
+            if not ci:
                 continue
-            lines.append(f"━━━ 📌 {cat} ━━━")
-            for it in cat_items:
-                global_idx += 1
-                line = f"{global_idx}. {it.title}"
+            lines.append(f"━━━ 🌍 {cat} ━━━")
+            for it in ci:
+                idx += 1
+                s = f"{idx}. {it.title}"
                 if it.summary:
-                    short = it.summary[:80].replace("\n", " ")
-                    line += f"\n    📝 {short}"
+                    s += f"\n    {it.summary[:500]}"
                 if it.url:
-                    line += f"\n    🔗 {it.url}"
-                lines.append(line)
+                    s += f"\n    🔗 {it.url}"
+                lines.append(s)
             lines.append("")
-
         body = "\n".join(lines)
-
-        if len(body) > 20000:
-            body = body[:20000] + "\n...（内容过长已截断）"
-
-        payload = {
-            "msg_type": "text",
-            "content": {"text": body},
-        }
-
-        async with httpx.AsyncClient(timeout=10) as client:
-            resp = await client.post(self.webhook, json=payload)
-            if resp.status_code != 200:
-                print(f"[Feishu] 推送失败: HTTP {resp.status_code} - {resp.text}")
+        if len(body) > 18000:
+            body = body[:18000] + "\n...(截断)"
+        payload = {"msg_type": "text", "content": {"text": body}}
+        async with httpx.AsyncClient(timeout=10) as cli:
+            r = await cli.post(self.webhook, json=payload)
+            if r.status_code != 200:
+                print(f"[Feishu] HTTP {r.status_code}: {r.text}")
             else:
-                resp_data = resp.json()
-                code = resp_data.get("code", -1)
-                if code != 0:
-                    print(f"[Feishu] 推送失败: code={code} msg={resp_data.get('msg')}")
+                d = r.json()
+                if d.get("code", -1) != 0:
+                    print(f"[Feishu] err code={d.get('code')} msg={d.get('msg')}")
                 else:
-                    print(f"[Feishu] 推送成功")
+                    print("[Feishu] OK")
