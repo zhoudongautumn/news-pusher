@@ -1,7 +1,16 @@
-"""LLM 摘要模块 — AI 内容概述 + 外文翻译"""
+"""LLM 摘要 — 外文翻译 + 深度专业概述"""
 
 from openai import OpenAI
 from crawlers.base import NewsItem
+
+
+SYSTEM_PROMPT = (
+    "你是一位资深国际新闻主编，精通中英文。"
+    "你的任务是把外文新闻翻译成地道中文，并写出专业、有深度的内容概述。"
+    "输出必须全部使用中文，不允许出现任何英文单词或句子。"
+    "概述要求：讲清事件背景、核心事实、各方立场、市场/社会影响。"
+    "不要只复述标题，不要出现「据悉」「据报道」等套话开头。"
+)
 
 
 class Summarizer:
@@ -15,7 +24,7 @@ class Summarizer:
     async def summarize(self, items: list[NewsItem]) -> list[NewsItem]:
         if not items:
             return items
-        for cat in ["科技", "金融", "综合"]:
+        for cat in ["世界要闻", "科技前沿", "金融财经", "综合"]:
             cat_items = [it for it in items if it.category == cat]
             if not cat_items:
                 continue
@@ -23,24 +32,23 @@ class Summarizer:
         return items
 
     async def _summarize_category(self, items: list[NewsItem], category: str):
-        texts = "\n".join(
-            f"{i+1}. {it.title}（来源: {it.source}）"
+        texts = "\n\n".join(
+            f"新闻{i+1}\n标题: {it.title}\n原文摘要: {it.summary[:500]}"
             for i, it in enumerate(items)
         )
-        prompt = (
-            f"你是一位资深新闻编辑。以下是一组「{category}」板块的新闻标题。\n\n"
-            f"要求：\n"
-            f"1. 如果标题是英文或其他外语，必须先翻译成流畅的中文\n"
-            f"2. 根据你的知识，为每条新闻撰写一段完整的中文概述，包含：事件背景、核心内容、影响或意义\n"
-            f"3. 语言自然流畅，像专业新闻简报，不要机械罗列\n"
-            f"4. 没有字数限制，但要完整涵盖要点\n"
-            f"5. 按序号一行返回，格式为「序号. 中文标题：概述内容」\n\n"
-            f"{texts}"
+        user_msg = (
+            f"以下是 {len(items)} 条「{category}」新闻，部分为英文。请逐条处理：\n\n"
+            f"{texts}\n\n"
+            f"请为每条新闻返回一行，格式: 「序号. 中文标题：中文概述」\n"
+            f"概述要完整深入，包含背景、要点和影响，不限字数。英文标题和摘要必须翻译成中文。"
         )
         try:
             resp = self.client.chat.completions.create(
                 model=self.model,
-                messages=[{"role": "user", "content": prompt}],
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": user_msg},
+                ],
                 temperature=0.5,
                 max_tokens=8192,
             )
@@ -49,6 +57,6 @@ class Summarizer:
             for i, line in enumerate(lines):
                 if i < len(items):
                     clean = line.split(". ", 1)[-1] if ". " in line else line
-                    items[i].summary = clean[:600]
+                    items[i].summary = clean[:1000]
         except Exception as e:
-            print(f"[Summarizer/{category}] LLM 调用失败: {e}")
+            print(f"[Summarizer/{category}] LLM 失败: {e}")
