@@ -11,14 +11,16 @@ class NewsItem:
     summary: str = ""
     source: str = ""
     published: Optional[datetime] = None
+    category: str = "综合"  # 科技 / 金融 / 综合
     extra: dict = field(default_factory=dict)
 
-    def formatted(self, idx: int = 0) -> str:
+    def formatted(self, idx: int = 0, show_category: bool = False) -> str:
         prefix = f"{idx}. " if idx else ""
+        cat_tag = f"[{self.category}] " if show_category else ""
         date_str = ""
         if self.published:
             date_str = self.published.strftime(" (%m-%d %H:%M)")
-        s = f"{prefix}**{self.title}**{date_str}\n  {self.summary[:120]}…" if len(self.summary) > 120 else f"{prefix}**{self.title}**{date_str}\n  {self.summary}"
+        s = f"{prefix}{cat_tag}**{self.title}**{date_str}\n  {self.summary[:120]}…" if len(self.summary) > 120 else f"{prefix}{cat_tag}**{self.title}**{date_str}\n  {self.summary}"
         if self.url:
             s += f"\n  🔗 {self.url}"
         return s

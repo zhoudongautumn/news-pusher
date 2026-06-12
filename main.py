@@ -1,4 +1,4 @@
-﻿"""新闻推送主入口 — 抓取 → 摘要 → 推送"""
+﻿"""新闻推送主入口 — 抓取 → 分类 → 精选 → 概述 → 推送"""
 
 import asyncio
 import os
@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import config
 from crawlers.rss import RSSCrawler
 from crawlers.hotlist import HotlistCrawler
+from crawlers.categorizer import classify, select_top
 from crawlers.base import NewsItem
 from pushers.feishu import FeishuPusher
 from pushers.wecom import WeComPusher
@@ -42,7 +43,7 @@ async def fetch_all() -> list[NewsItem]:
 async def push_all(items: list[NewsItem]):
     """推送到所有启用的渠道"""
     now = datetime.now(pytz.timezone(config.TIMEZONE))
-    title = f"📰 新闻早报 — {now.strftime('%Y-%m-%d %A')}"
+    title = f"📰 每日新闻早报 — {now.strftime('%Y-%m-%d %A')}"
 
     tasks = []
     if config.ENABLE_FEISHU and config.FEISHU_WEBHOOK:
@@ -86,20 +87,44 @@ async def main():
     items = unique_items
     print(f"   去重后 {len(items)} 条")
 
-    # 3. 可选 LLM 摘要
+    # 3. 板块分类
+    print("🏷️  正在分类...")
+    # 合并源映射
+    source_map = {}
+    source_map.update(config.RSS_CATEGORY_MAP)
+    source_map.update(config.HOTLIST_CATEGORY_MAP)
+    # 按 source 名称匹配（RSS 源会带 "RSS/" 前缀，去掉前缀匹配）
+    items = classify(items, source_map, config.RSS_URL_CATEGORY_MAP)
+    for cat in config.CATEGORIES:
+        count = sum(1 for it in items if it.category == cat)
+        print(f"   [{cat}] {count} 条")
+
+    # 4. 精选：每个板块取 top N
+    print(f"✨ 精选每个板块 Top {config.MAX_NEWS_PER_CATEGORY}...")
+    items = select_top(items, config.MAX_NEWS_PER_CATEGORY)
+    print(f"   精选后共 {len(items)} 条")
+
+    # 5. AI 内容概述
     if config.ENABLE_SUMMARY and config.LLM_API_KEY:
-        print("🤖 正在生成 AI 摘要...")
+        print("🤖 正在生成 AI 内容概述...")
         summarizer = Summarizer(config.LLM_API_KEY, config.LLM_MODEL, config.LLM_BASE_URL)
         items = await summarizer.summarize(items)
-        print("   摘要生成完成")
+        print("   概述生成完成")
 
-    # 4. 控制台输出预览
+    # 6. 控制台预览（按板块）
     print("\n📋 今日新闻预览:")
-    for i, it in enumerate(items, 1):
-        print(f"  {i}. [{it.source}] {it.title}")
+    for cat in config.CATEGORIES:
+        cat_items = [it for it in items if it.category == cat]
+        if not cat_items:
+            continue
+        print(f"\n  【{cat}】")
+        for i, it in enumerate(cat_items, 1):
+            summary_preview = it.summary[:60] + "..." if len(it.summary) > 60 else it.summary
+            print(f"    {i}. {it.title}")
+            print(f"       {summary_preview}")
     print()
 
-    # 5. 推送
+    # 7. 推送
     print("📤 正在推送...")
     await push_all(items)
     print("✅ 推送完成")
@@ -107,5 +132,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-

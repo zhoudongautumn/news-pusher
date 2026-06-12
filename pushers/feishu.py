@@ -1,4 +1,4 @@
-﻿"""飞书机器人推送"""
+﻿"""飞书机器人推送 — 按板块分组"""
 
 import httpx
 from crawlers.base import NewsItem
@@ -12,45 +12,44 @@ class FeishuPusher:
         if not items or not self.webhook:
             return
 
-        content_lines = []
-        for i, it in enumerate(items, 1):
-            line = f"{i}. **[{it.source}]** [{it.title}]({it.url})"
-            if it.summary:
-                short = it.summary[:100].replace("\n", " ")
-                line += f"\n> {short}"
-            content_lines.append(line)
+        categories = ["科技", "金融", "综合"]
+        lines = [title, ""]
+        global_idx = 0
 
-        body = "\n".join(content_lines)
+        for cat in categories:
+            cat_items = [it for it in items if it.category == cat]
+            if not cat_items:
+                continue
+            lines.append(f"━━━ 📌 {cat} ━━━")
+            for it in cat_items:
+                global_idx += 1
+                line = f"{global_idx}. {it.title}"
+                if it.summary:
+                    short = it.summary[:80].replace("\n", " ")
+                    line += f"\n    📝 {short}"
+                if it.url:
+                    line += f"\n    🔗 {it.url}"
+                lines.append(line)
+            lines.append("")
 
-        if len(body) > 30000:
-            body = body[:30000] + "\n...（内容过长已截断）"
+        body = "\n".join(lines)
+
+        if len(body) > 20000:
+            body = body[:20000] + "\n...（内容过长已截断）"
 
         payload = {
-            "msg_type": "interactive",
-            "card": {
-                "header": {
-                    "title": {
-                        "tag": "plain_text",
-                        "content": title,
-                    }
-                },
-                "elements": [
-                    {
-                        "tag": "div",
-                        "text": {
-                            "tag": "lark_md",
-                            "content": body,
-                        },
-                    }
-                ],
-            },
+            "msg_type": "text",
+            "content": {"text": body},
         }
 
         async with httpx.AsyncClient(timeout=10) as client:
             resp = await client.post(self.webhook, json=payload)
             if resp.status_code != 200:
-                print(f"[Feishu] 推送失败: {resp.text}")
+                print(f"[Feishu] 推送失败: HTTP {resp.status_code} - {resp.text}")
             else:
                 resp_data = resp.json()
-                if resp_data.get("code") != 0:
-                    print(f"[Feishu] 推送失败: {resp.text}")
+                code = resp_data.get("code", -1)
+                if code != 0:
+                    print(f"[Feishu] 推送失败: code={code} msg={resp_data.get('msg')}")
+                else:
+                    print(f"[Feishu] 推送成功")
