@@ -1,4 +1,4 @@
-﻿"""LLM 摘要模块 — 用 AI 给新闻生成内容概述"""
+"""LLM 摘要模块 — 用 AI 给新闻生成内容概述"""
 
 from openai import OpenAI
 from crawlers.base import NewsItem
@@ -17,7 +17,6 @@ class Summarizer:
         if not items:
             return items
 
-        # 按板块分组处理，让 LLM 更聚焦
         for cat in ["科技", "金融", "综合"]:
             cat_items = [it for it in items if it.category == cat]
             if not cat_items:
@@ -32,7 +31,7 @@ class Summarizer:
             for i, it in enumerate(items)
         )
         prompt = (
-            f"以下是一组「{category}」板块的新闻标题。请为每条新闻写一段 50-80 字的中文内容概述，"
+            f"以下是一组「{category}」板块的新闻标题。请为每条新闻写一段约100字的中文内容概述，"
             f"说清楚这条新闻在讲什么，不要只重复标题。按序号一行一条返回，格式为「序号. 概述内容」。\n\n"
             + texts
         )
@@ -47,7 +46,6 @@ class Summarizer:
             lines = content.split("\n")
             for i, line in enumerate(lines):
                 if i < len(items):
-                    # 去掉序号前缀，如 "1. 概述内容"
                     clean = line.split(". ", 1)[-1] if ". " in line else line
                     items[i].summary = clean[:200]
         except Exception as e:
