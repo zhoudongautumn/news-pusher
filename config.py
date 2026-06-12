@@ -1,88 +1,86 @@
 import os
-from dataclasses import dataclass, field
-from typing import Optional
 
-# ============================================================
-# 全局配置 — 板块化版本
-# ============================================================
+CATEGORIES = ["世界要闻", "科技前沿", "金融财经", "综合"]
 
 TIMEZONE = "Asia/Shanghai"
 MAX_NEWS_PER_SOURCE = 10
 MAX_NEWS_PER_CATEGORY = 10
 
-# ============================================================
-# 板块定义
-# ============================================================
-CATEGORIES = ["科技", "金融", "综合"]
-
 RSS_CATEGORY_MAP = {
-    "Hacker News": "科技",
-    "OpenAI Blog": "科技",
-    "IT之家": "科技",
-    "iThome": "科技",
-    "Reuters Business News": "金融",
-    "Yahoo Finance": "金融",
-    "路透": "金融",
+    "BBC News": "世界要闻",
+    "NPR Topics: News": "世界要闻",
+    "Reuters": "世界要闻",
+    "The Guardian": "世界要闻",
+    "Al Jazeera": "世界要闻",
+    "路透": "世界要闻",
+    "Ars Technica": "科技前沿",
+    "MIT Technology Review": "科技前沿",
+    "The Verge": "科技前沿",
+    "IT之家": "科技前沿",
+    "Hacker News": "科技前沿",
+    "Reuters Business News": "金融财经",
+    "MarketWatch.com - Top Stories": "金融财经",
+    "CNBC": "金融财经",
+    "Yahoo Finance": "金融财经",
+    "Financial Times": "金融财经",
+    "Wall Street Journal": "金融财经",
 }
 
 RSS_URL_CATEGORY_MAP = {
-    "cls": "金融",
-    "reuters.com/reuters/business": "金融",
-    "finance.yahoo.com": "金融",
-    "ithome": "科技",
-    "openai.com": "科技",
-    "hnrss": "科技",
+    "bbc": "世界要闻",
+    "npr.org": "世界要闻",
+    "reuters.com/world": "世界要闻",
+    "theguardian.com": "世界要闻",
+    "aljazeera": "世界要闻",
+    "reuters.com/news": "世界要闻",
+    "arstechnica": "科技前沿",
+    "technologyreview.com": "科技前沿",
+    "theverge.com": "科技前沿",
+    "ithome": "科技前沿",
+    "hnrss": "科技前沿",
+    "openai.com": "科技前沿",
+    "reuters.com/reuters/business": "金融财经",
+    "marketwatch.com": "金融财经",
+    "cnbc.com": "金融财经",
+    "finance.yahoo.com": "金融财经",
+    "ft.com": "金融财经",
+    "wsj.com": "金融财经",
+    "cls": "金融财经",
 }
 
-# ============================================================
-# RSS 源列表
-# ============================================================
 RSS_FEEDS = [
-    # ---- 科技 ----
+    "http://feeds.bbci.co.uk/news/world/rss.xml",
+    "https://feeds.npr.org/1004/rss.xml",
+    "https://www.theguardian.com/world/rss",
+    "http://cn.reuters.com/tools/rss/",
+    "https://feeds.arstechnica.com/arstechnica/index",
+    "https://www.technologyreview.com/feed/",
+    "https://www.theverge.com/rss/index.xml",
     "https://www.ithome.com/rss/",
     "https://openai.com/blog/rss.xml",
     "https://hnrss.org/frontpage",
-    # ---- 金融 ----
-    "http://feeds.reuters.com/reuters/businessNews",
+    "https://feeds.marketwatch.com/marketwatch/topstories/",
+    "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114",
     "https://finance.yahoo.com/news/rssindex",
-    # ---- 综合 ----
     "https://rsshub.app/zhihu/hot",
-    "https://rsshub.app/weibo/search/hot",
-    "http://feeds.bbci.co.uk/news/world/rss.xml",
-    "http://rss.cnn.com/rss/edition_world.rss",
-    "http://cn.reuters.com/tools/rss/",
 ]
 
-# ============================================================
-# 热搜源
-# ============================================================
 ENABLE_HOTLIST = True
-HOTLIST_SOURCES = ["zhihu", "weibo", "baidu", "cls"]
+HOTLIST_SOURCES = ["cls", "zhihu"]
 
 HOTLIST_CATEGORY_MAP = {
     "zhihu": "综合",
-    "weibo": "综合",
-    "baidu": "综合",
-    "cls": "金融",
+    "cls": "金融财经",
 }
 
-# ============================================================
-# 数据源开关
-# ============================================================
 ENABLE_RSS = True
 ENABLE_NEWSAPI = False
 
-# ============================================================
-# LLM 摘要（DeepSeek）
-# ============================================================
 ENABLE_SUMMARY = True
 LLM_API_KEY = os.getenv("LLM_API_KEY", "")
 LLM_MODEL = "deepseek-chat"
 LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.deepseek.com")
 
-# ============================================================
-# 推送渠道
-# ============================================================
 ENABLE_EMAIL = False
 ENABLE_FEISHU = True
 ENABLE_WECOM = True
@@ -96,6 +94,5 @@ MAIL_TO = os.getenv("MAIL_TO", "")
 
 FEISHU_WEBHOOK = os.getenv("FEISHU_WEBHOOK", "")
 WECOM_WEBHOOK = os.getenv("WECOM_WEBHOOK", "")
-
 TG_BOT_TOKEN = os.getenv("TG_BOT_TOKEN", "")
 TG_CHAT_ID = os.getenv("TG_CHAT_ID", "")
