@@ -1,4 +1,4 @@
-"""新闻推送 — 国内+国际 × 经济/科技/军事/综合"""
+"""新闻推送 — 按区域分别推送"""
 
 import asyncio, os, sys
 from datetime import datetime
@@ -14,31 +14,45 @@ from crawlers.base import NewsItem
 from pushers.feishu import FeishuPusher
 from pushers.wecom import WeComPusher
 
+REGION = os.getenv("REGION", "all")  # domestic / international / all
+
 
 async def main():
     now = datetime.now(pytz.timezone(config.TIMEZONE))
+    label = {"domestic": "国内", "international": "国际"}.get(REGION, "综合")
     print("=" * 50)
-    print(f"📰 新闻早报 — {now.strftime('%Y-%m-%d %A')}")
+    print(f"📰 新闻早报 [{label}] — {now.strftime('%Y-%m-%d %A')}")
     print("=" * 50)
 
-    # 1. 抓取
+    # 1. 根据区域选择数据源
+    all_feeds = config.RSS_FEEDS
+    if REGION == "domestic":
+        all_feeds = [(u, c) for u, c in all_feeds if c.startswith("国内")]
+    elif REGION == "international":
+        all_feeds = [(u, c) for u, c in all_feeds if c.startswith("国际")]
+
+    hotlist_srcs = config.HOTLIST_SOURCES
+    if REGION == "domestic":
+        hotlist_srcs = [(n, c) for n, c in hotlist_srcs if c.startswith("国内")]
+    elif REGION == "international":
+        hotlist_srcs = [(n, c) for n, c in hotlist_srcs if c.startswith("国际")]
+
+    # 2. 抓取
     print("🌐 抓取...")
     tasks = []
     if config.ENABLE_RSS:
-        tasks.append(RSSCrawler(config.RSS_FEEDS, config.PER_SOURCE).fetch())
+        tasks.append(RSSCrawler(all_feeds, config.PER_SOURCE).fetch())
     if config.ENABLE_HOTLIST:
-        tasks.append(HotlistCrawler(config.HOTLIST_SOURCES, config.PER_SOURCE).fetch())
+        tasks.append(HotlistCrawler(hotlist_srcs, config.PER_SOURCE).fetch())
     if not tasks:
         print("无数据源"); return
     results = await asyncio.gather(*tasks)
     items = []
     for r in results: items.extend(r)
     print(f"   共 {len(items)} 条")
+    if not items: print("⚠️ 无新闻"); return
 
-    if not items:
-        print("⚠️ 无新闻"); return
-
-    # 2. 去重
+    # 3. 去重
     seen = set(); uni = []
     for it in items:
         k = (it.title, it.url)
@@ -46,29 +60,35 @@ async def main():
     items = uni
     print(f"   去重后 {len(items)} 条")
 
-    # 3. 兜底分类
+    # 4. 兜底分类
     items = classify(items)
-    for cat in config.ALL_CATS:
+    target_cats = [c for c in config.ALL_CATS if (
+        REGION == "all" or
+        (REGION == "domestic" and c.startswith("国内")) or
+        (REGION == "international" and c.startswith("国际"))
+    )]
+    for cat in target_cats:
         c = sum(1 for it in items if it.category == cat)
         if c: print(f"   [{cat}] {c} 条")
 
-    # 4. 精选
+    # 5. 精选
     print(f"✨ 精选每子类 Top {config.PER_SUBCAT}...")
     items = select_top(items, config.PER_SUBCAT)
     print(f"   精选后 {len(items)} 条")
 
-    # 5. AI 概述
+    # 6. AI
     if config.ENABLE_SUMMARY and config.LLM_API_KEY:
-        print("🤖 AI 概述（翻译+深度总结）...")
+        print("🤖 AI 概述...")
         items = await Summarizer(
             config.LLM_API_KEY, config.LLM_MODEL, config.LLM_BASE_URL
         ).summarize(items)
         print("   完成")
     elif config.ENABLE_SUMMARY:
-        print("⚠️ 未配 LLM_API_KEY，跳过 AI")
+        print("⚠️ 未配 LLM_API_KEY")
 
-    # 6. 推送
-    title = f"📰 新闻早报 — {now.strftime('%Y-%m-%d %A')}"
+    # 7. 推送
+    region_title = {"domestic": "🇨🇳 国内早报", "international": "🌍 国际早报"}.get(REGION, "综合")
+    title = f"📰 {region_title} — {now.strftime('%Y-%m-%d %A')}"
     print("📤 推送...")
     tasks2 = []
     if config.FEISHU_WEBHOOK:
