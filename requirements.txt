@@ -1,0 +1,8 @@
+﻿# 核心依赖
+feedparser>=6.0.11        # RSS 解析
+httpx>=0.27.0             # HTTP 客户端 (支持 async)
+openai>=1.0.0             # LLM 摘要 (可选)
+pytz>=2024.1              # 时区
+
+# 可选: Google News / NewsAPI
+# requests>=2.31.0
