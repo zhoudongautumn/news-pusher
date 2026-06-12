@@ -44,7 +44,7 @@ ENABLE_TELEGRAM = False
 
 # 邮件 (推荐 QQ邮箱 / 163邮箱)
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.qq.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", "465"))
+SMTP_PORT = int(os.getenv("SMTP_PORT") or "465")
 SMTP_USER = os.getenv("SMTP_USER", "")
 SMTP_PASS = os.getenv("SMTP_PASS", "")      # QQ邮箱用授权码
 MAIL_TO = os.getenv("MAIL_TO", "")
