@@ -94,7 +94,7 @@ async def main():
         if not config.LLM_API_KEY:
             print("⚠️  未配置 LLM_API_KEY，跳过 AI 概述！请在 GitHub Secrets 中添加")
         else:
-            print("🤖 正在生成 AI 内容概述（约70字/条）...")
+            print("🤖 正在生成 AI 内容概述...")
             summarizer = Summarizer(config.LLM_API_KEY, config.LLM_MODEL, config.LLM_BASE_URL)
             items = await summarizer.summarize(items)
             print("   概述生成完成")
@@ -106,9 +106,8 @@ async def main():
             continue
         print(f"\n  【{cat}】")
         for i, it in enumerate(cat_items, 1):
-            summary_preview = it.summary[:60] + "..." if len(it.summary) > 60 else it.summary
             print(f"    {i}. {it.title}")
-            print(f"       {summary_preview}")
+            print(f"       {it.summary}")
     print()
 
     print("📤 正在推送...")
