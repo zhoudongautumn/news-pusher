@@ -1,4 +1,4 @@
-﻿"""热搜爬虫 — 知乎 / 微博 / 百度热搜"""
+"""热搜爬虫 — 知乎 / 微博 / 百度热搜 / 财联社"""
 
 import httpx
 import re
@@ -18,6 +18,7 @@ class HotlistCrawler(BaseCrawler):
             "zhihu": self._zhihu,
             "weibo": self._weibo,
             "baidu": self._baidu,
+            "cls": self._cls,
         }
 
     async def fetch(self) -> list[NewsItem]:
@@ -45,7 +46,7 @@ class HotlistCrawler(BaseCrawler):
             items.append(NewsItem(
                 title=target.get("title", ""),
                 url=target.get("url", ""),
-                summary=f"热度 #{(entry.get('detail_text', ''))}",
+                summary=f"热度 #{entry.get('detail_text', '')}",
                 source="知乎热榜",
             ))
         return items
@@ -83,5 +84,31 @@ class HotlistCrawler(BaseCrawler):
                 title=word,
                 url=f"https://www.baidu.com/s?wd={quote(q)}",
                 source="百度热搜",
+            ))
+        return items
+
+    async def _cls(self, client: httpx.AsyncClient) -> list[NewsItem]:
+        """财联社电报 — 7x24 金融快讯"""
+        url = "https://www.cls.cn/api/sw?app=CailianpressWeb&os=web&sv=8.4.6"
+        headers = {
+            "User-Agent": "Mozilla/5.0",
+            "Referer": "https://www.cls.cn/",
+        }
+        resp = await client.get(url, headers=headers)
+        data = resp.json()
+        items = []
+        entries = data.get("data", {}).get("roll_data", []) or data.get("data", [])
+        if not isinstance(entries, list):
+            entries = []
+        for entry in entries[:self.max_items]:
+            title = entry.get("title", "") or entry.get("brief", "")
+            content = entry.get("content", "") or entry.get("brief", "")
+            ctime = entry.get("ctime", 0)
+            items.append(NewsItem(
+                title=title,
+                url=f"https://www.cls.cn/detail/{entry.get('id', '')}",
+                summary=content[:200],
+                source="财联社",
+                published=datetime.fromtimestamp(ctime) if ctime else None,
             ))
         return items
