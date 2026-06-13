@@ -1,4 +1,4 @@
-"""分类器 — 源已预标记，兜底关键词"""
+"""分类器 — 源预标记，绝不覆盖"""
 
 from crawlers.base import NewsItem
 
@@ -17,19 +17,16 @@ _KEYS = {
         "坦克", "防空", "海军", "陆军", "空军", "特种部队", "征兵", "冲突"],
 }
 
-_DOMESTIC_SOURCES = ["人民日报", "新华网", "人民网", "IT之家", "财联社", "知乎热榜", "新浪"]
-
 
 def classify(items: list[NewsItem]) -> list[NewsItem]:
+    """只对未标记 item 做分类，已标记的绝不覆盖"""
     for it in items:
-        if it.category and it.category != "国内综合":
+        if it.category:
             continue
         text = it.title + " " + it.summary
-        is_domestic = any(s in it.source for s in _DOMESTIC_SOURCES) or \
-                      any(kw in text for kw in ["中国", "北京", "上海", "深圳", "A股"])
         sub = _keyword_sub(text)
-        region = "国内" if is_domestic else "国际"
-        it.category = f"{region}{sub}"
+        is_domestic = any(kw in text for kw in ["中国", "北京", "上海", "深圳", "A股", "国内"])
+        it.category = f"{'国内' if is_domestic else '国际'}{sub}"
     return items
 
 
