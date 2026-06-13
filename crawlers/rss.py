@@ -1,7 +1,7 @@
-"""RSS 爬虫 — 支持分类标记"""
+"""RSS 爬虫 — 支持分类标记 + 48h 新鲜度过滤"""
 
 import asyncio, feedparser, html as _html, re
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from .base import BaseCrawler, NewsItem
 
 
@@ -17,20 +17,25 @@ class RSSCrawler(BaseCrawler):
     name = "rss"
 
     def __init__(self, feeds: list, per_source: int = 10):
-        """feeds: [(url, category), ...]"""
         self.feeds = feeds
         self.per_source = per_source
 
     async def fetch(self) -> list[NewsItem]:
         items = []
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=48)
         for url, cat in self.feeds:
             try:
                 feed = await asyncio.to_thread(feedparser.parse, url)
                 src = feed.feed.get("title", url)
-                for entry in feed.entries[:self.per_source]:
+                count = 0
+                for entry in feed.entries:
+                    if count >= self.per_source:
+                        break
                     published = None
                     if hasattr(entry, "published_parsed") and entry.published_parsed:
-                        published = datetime(*entry.published_parsed[:6])
+                        published = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
+                    if published and published < cutoff:
+                        continue
                     raw = ""
                     if hasattr(entry, "content") and entry.content:
                         raw = entry.content[0].get("value", "")
@@ -45,6 +50,7 @@ class RSSCrawler(BaseCrawler):
                         published=published,
                         category=cat,
                     ))
+                    count += 1
             except Exception as e:
                 print(f"[RSS] fail {url}: {e}")
         return items
