@@ -15,11 +15,9 @@ REGIONS = {
 }
 
 RSS_FEEDS = [
-    # === 国内（全直连）===
+    # === 国内 ===
     ("https://www.ithome.com/rss/", "国内科技"),
-    ("http://www.people.com.cn/rss/opinion.xml", "国内综合"),
-    ("http://www.xinhuanet.com/politics/xhll.xml", "国内综合"),
-    ("https://feedx.net/rss/sina.xml", "国内综合"),
+    ("https://www.36kr.com/feed", "国内科技"),
     # === 国际 ===
     ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
     ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
