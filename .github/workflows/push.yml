@@ -2,7 +2,8 @@ name: 📰 新闻早报推送
 
 on:
   schedule:
-    - cron: "30 23 * * *"   # 北京时间 7:30
+    - cron: "25 3 * * *"    # 测试用，约 11:25 触发
+    - cron: "30 23 * * *"   # 正式，北京时间 7:30
   workflow_dispatch:
 
 jobs:
