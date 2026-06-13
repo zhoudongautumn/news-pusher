@@ -2,8 +2,10 @@ name: 📰 新闻早报推送
 
 on:
   schedule:
-    - cron: "25 3 * * *"    # 测试用，约 11:25 触发
+    - cron: "45 11  * * *"    # 测试用，约 11:45 触发
+      timezone: "Asia/Shanghai"
     - cron: "30 23 * * *"   # 正式，北京时间 7:30
+      timezone: "Asia/Shanghai"
   workflow_dispatch:
 
 jobs:
