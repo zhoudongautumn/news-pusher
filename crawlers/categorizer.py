@@ -17,21 +17,16 @@ _KEYS = {
         "坦克", "防空", "海军", "陆军", "空军", "特种部队", "征兵", "冲突"],
 }
 
-_DOMESTIC_SOURCES = ["人民日报", "新华社", "经济日报", "科技日报", "IT之家",
-    "财联社", "知乎热榜", "环球网"]
+_DOMESTIC_SOURCES = ["人民日报", "新华网", "人民网", "IT之家", "财联社", "知乎热榜", "新浪"]
 
 
 def classify(items: list[NewsItem]) -> list[NewsItem]:
-    """对未标记 item 做关键词兜底分类"""
     for it in items:
         if it.category and it.category != "国内综合":
             continue
         text = it.title + " " + it.summary
-        # 判断国内还是国际
         is_domestic = any(s in it.source for s in _DOMESTIC_SOURCES) or \
                       any(kw in text for kw in ["中国", "北京", "上海", "深圳", "A股"])
-
-        # 判断子类
         sub = _keyword_sub(text)
         region = "国内" if is_domestic else "国际"
         it.category = f"{region}{sub}"
