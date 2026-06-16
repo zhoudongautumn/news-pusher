@@ -2,8 +2,8 @@ name: 📰 新闻早报/午报推送
 
 on:
   schedule:
-    - cron: "0 14 * * *"    # 北京时间14:00
-    - cron: "30 7 * * *"   # 北京时间 7:30
+    - cron: "30 23 * * *"   # UTC 23:30 = 北京时间 7:30
+    - cron: "0 6 * * *"     # UTC 06:00 = 北京时间 14:00
   workflow_dispatch:
 
 jobs:
