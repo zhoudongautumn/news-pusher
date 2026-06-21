@@ -1,4 +1,4 @@
-"""热搜爬虫 — 知乎/财联社，带分类"""
+﻿"""热搜爬虫 — 知乎/财联社/百度"""
 
 import httpx, re
 from urllib.parse import quote
@@ -10,12 +10,12 @@ class HotlistCrawler(BaseCrawler):
     name = "hotlist"
 
     def __init__(self, sources: list, per_source: int = 10):
-        """sources: [(name, category), ...]"""
         self.sources = sources
         self.per_source = per_source
         self._h = {
             "zhihu": self._zhihu,
             "cls": self._cls,
+            "baidu": self._baidu,
         }
 
     async def fetch(self) -> list[NewsItem]:
@@ -26,8 +26,7 @@ class HotlistCrawler(BaseCrawler):
                 if not h: continue
                 try:
                     r = await h(cli)
-                    for it in r:
-                        it.category = cat
+                    for it in r: it.category = cat
                     items.extend(r)
                 except Exception as e:
                     print(f"[Hotlist/{name}] fail: {e}")
@@ -61,5 +60,20 @@ class HotlistCrawler(BaseCrawler):
                 title=t, url=f"https://www.cls.cn/detail/{e.get('id','')}",
                 summary=c[:300], source="财联社",
                 published=datetime.fromtimestamp(ct) if ct else None,
+            ))
+        return items
+
+    async def _baidu(self, cli):
+        url = "https://top.baidu.com/board?tab=realtime"
+        r = await cli.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        html = r.text
+        items = []
+        words = re.findall(r'"word":"([^"]+)"', html)
+        queries = re.findall(r'"query":"([^"]+)"', html)
+        for i, word in enumerate(words[:self.per_source]):
+            q = queries[i] if i < len(queries) else word
+            items.append(NewsItem(
+                title=word, url=f"https://www.baidu.com/s?wd={quote(q)}",
+                source="百度热搜",
             ))
         return items

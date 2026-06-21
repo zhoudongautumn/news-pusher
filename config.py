@@ -1,4 +1,4 @@
-import os
+﻿import os
 
 TIMEZONE = "Asia/Shanghai"
 PER_SOURCE = 10
@@ -18,6 +18,7 @@ RSS_FEEDS = [
     # === 国内 ===
     ("https://www.ithome.com/rss/", "国内科技"),
     ("https://www.36kr.com/feed", "国内科技"),
+    ("https://feedx.net/rss/people.xml", "国内综合"),
     # === 国际 ===
     ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
     ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
@@ -38,6 +39,7 @@ ENABLE_HOTLIST = True
 HOTLIST_SOURCES = [
     ("cls", "国内经济"),
     ("zhihu", "国内综合"),
+    ("baidu", "国内综合"),
 ]
 
 ENABLE_RSS = True
@@ -49,7 +51,7 @@ LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.deepseek.com")
 
 ENABLE_EMAIL = False
 ENABLE_FEISHU = True
-ENABLE_WECOM = True
+ENABLE_WECOM = False
 ENABLE_TELEGRAM = False
 
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.qq.com")
