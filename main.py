@@ -1,4 +1,4 @@
-"""新闻推送 — 按区域分别推送"""
+﻿"""新闻推送 — 按区域分别推送"""
 
 import asyncio, os, sys
 from datetime import datetime
@@ -12,19 +12,17 @@ from crawlers.categorizer import classify, select_top
 from summarizer import Summarizer
 from crawlers.base import NewsItem
 from pushers.feishu import FeishuPusher
-from pushers.wecom import WeComPusher
 
-REGION = os.getenv("REGION", "all")  # domestic / international / all
+REGION = os.getenv("REGION", "all")
 
 
 async def main():
     now = datetime.now(pytz.timezone(config.TIMEZONE))
     label = {"domestic": "国内", "international": "国际"}.get(REGION, "综合")
     print("=" * 50)
-    print(f"📰 新闻早报 [{label}] — {now.strftime('%Y-%m-%d %A')}")
+    print(f"📰 新闻推送 [{label}] — {now.strftime('%Y-%m-%d %A')}")
     print("=" * 50)
 
-    # 1. 根据区域选择数据源
     all_feeds = config.RSS_FEEDS
     if REGION == "domestic":
         all_feeds = [(u, c) for u, c in all_feeds if c.startswith("国内")]
@@ -37,7 +35,6 @@ async def main():
     elif REGION == "international":
         hotlist_srcs = [(n, c) for n, c in hotlist_srcs if c.startswith("国际")]
 
-    # 2. 抓取
     print("🌐 抓取...")
     tasks = []
     if config.ENABLE_RSS:
@@ -52,7 +49,6 @@ async def main():
     print(f"   共 {len(items)} 条")
     if not items: print("⚠️ 无新闻"); return
 
-    # 3. 去重
     seen = set(); uni = []
     for it in items:
         k = (it.title, it.url)
@@ -60,7 +56,6 @@ async def main():
     items = uni
     print(f"   去重后 {len(items)} 条")
 
-    # 4. 兜底分类
     items = classify(items)
     target_cats = [c for c in config.ALL_CATS if (
         REGION == "all" or
@@ -71,12 +66,10 @@ async def main():
         c = sum(1 for it in items if it.category == cat)
         if c: print(f"   [{cat}] {c} 条")
 
-    # 5. 精选
-    print(f"✨ 精选每子类 Top {config.PER_SUBCAT}...")
+    print(f"✨ 精选 Top {config.PER_SUBCAT}...")
     items = select_top(items, config.PER_SUBCAT)
     print(f"   精选后 {len(items)} 条")
 
-    # 6. AI
     if config.ENABLE_SUMMARY and config.LLM_API_KEY:
         print("🤖 AI 概述...")
         items = await Summarizer(
@@ -86,16 +79,11 @@ async def main():
     elif config.ENABLE_SUMMARY:
         print("⚠️ 未配 LLM_API_KEY")
 
-    # 7. 推送
-    region_title = {"domestic": "🇨🇳 国内早报", "international": "🌍 国际早报"}.get(REGION, "综合")
-    title = f"📰 {region_title} — {now.strftime('%Y-%m-%d %A')}"
+    region_title = {"domestic": "国内", "international": "国际"}.get(REGION, "综合")
+    title = f"📰 {region_title}新闻 — {now.strftime('%Y-%m-%d %A')}"
     print("📤 推送...")
-    tasks2 = []
     if config.FEISHU_WEBHOOK:
-        tasks2.append(FeishuPusher(config.FEISHU_WEBHOOK).push(items, title))
-    if config.WECOM_WEBHOOK:
-        tasks2.append(WeComPusher(config.WECOM_WEBHOOK).push(items, title))
-    if tasks2: await asyncio.gather(*tasks2)
+        await FeishuPusher(config.FEISHU_WEBHOOK).push(items, title)
     print("✅ 完成")
 
 
