@@ -14,23 +14,18 @@ REGIONS = {
     "国际": ["国际经济", "国际科技", "国际军事", "国际综合"],
 }
 
+# 仅保留直连 RSS（不走代理，确保可靠）
 RSS_FEEDS = [
-    # === 国内经济 ===
-    ("https://feedx.net/rss/eastmoney.xml", "国内经济"),
-    ("https://feedx.net/rss/sinafinance.xml", "国内经济"),
-    # === 国内科技 ===
+    # === 国内 ===
     ("https://www.ithome.com/rss/", "国内科技"),
     ("https://www.36kr.com/feed", "国内科技"),
-    ("https://feedx.net/rss/pingwest.xml", "国内科技"),
-    # === 国内军事 ===
-    ("https://feedx.net/rss/huanqiu-mil.xml", "国内军事"),
-    # === 国内综合 ===
-    ("https://feedx.net/rss/people.xml", "国内综合"),
-    ("https://feedx.net/rss/sina.xml", "国内综合"),
+    # === 国际综合 ===
+    ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
+    ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
+    ("https://www.theguardian.com/world/rss", "国际综合"),
     # === 国际经济 ===
     ("https://feeds.marketwatch.com/marketwatch/topstories/", "国际经济"),
     ("https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114", "国际经济"),
-    ("https://feeds.bloomberg.com/markets/news.rss", "国际经济"),
     # === 国际科技 ===
     ("https://feeds.arstechnica.com/arstechnica/index", "国际科技"),
     ("https://www.technologyreview.com/feed/", "国际科技"),
@@ -39,15 +34,15 @@ RSS_FEEDS = [
     ("https://www.wired.com/feed/rss", "国际科技"),
     # === 国际军事 ===
     ("https://www.defensenews.com/arc/outboundfeeds/vdr-cat/?outputType=xml", "国际军事"),
-    # === 国际综合 ===
-    ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
-    ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
-    ("https://www.theguardian.com/world/rss", "国际综合"),
 ]
 
+# 国内源全走爬虫直连 API（不走 RSS 代理）
 ENABLE_HOTLIST = True
 HOTLIST_SOURCES = [
     ("cls", "国内经济"),
+    ("eastmoney", "国内经济"),
+    ("sina", "国内综合"),
+    ("thepaper", "国内综合"),
     ("zhihu", "国内综合"),
     ("baidu", "国内综合"),
 ]
