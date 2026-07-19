@@ -27,7 +27,6 @@ RSS_FEEDS = [
     ("http://www.chinadaily.com.cn/rss/china_rss.xml", "国内综合"),
     ("https://www.cgtn.com/subscribe/rss/section/world.xml", "国内综合"),
     ("http://www.xinhuanet.com/english/rss/worldrss.xml", "国内综合"),
-    ("https://feedx.net/rss/people.xml", "国内综合"),
     # ========== 国内军事 ==========
     ("https://thediplomat.com/feed/", "国内军事"),
     # ========== 国际科技 ==========
@@ -49,7 +48,6 @@ RSS_FEEDS = [
     ("https://www.defensenews.com/arc/outboundfeeds/vdr-cat/?outputType=xml", "国际军事"),
 ]
 
-# 彻底关闭 Hotlist (API都在海外被墙)
 ENABLE_HOTLIST = False
 HOTLIST_SOURCES = []
 
