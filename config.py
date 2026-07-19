@@ -1,4 +1,4 @@
-﻿import os
+import os
 
 TIMEZONE = "Asia/Shanghai"
 PER_SOURCE = 10

@@ -1,4 +1,4 @@
-﻿"""LLM 摘要 — 完整段落 + 外文翻译 + 品质要求"""
+"""LLM 摘要 — 完整段落 + 外文翻译 + 品质要求"""
 
 from openai import OpenAI
 from crawlers.base import NewsItem

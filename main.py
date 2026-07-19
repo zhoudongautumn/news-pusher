@@ -1,4 +1,4 @@
-﻿"""新闻推送 — 按区域分别推送"""
+"""新闻推送 — 按区域分别推送"""
 
 import asyncio, os, sys
 from datetime import datetime
