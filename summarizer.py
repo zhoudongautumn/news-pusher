@@ -14,8 +14,8 @@ class Summarizer:
     async def summarize(self, items: list[NewsItem]) -> list[NewsItem]:
         if not items: return items
         for cat in [
-            "国内经济", "国内科技", "国内军事", "国内综合",
-            "国际经济", "国际科技", "国际军事", "国际综合",
+            "国内科技", "国内经济", "国内军事", "国内综合",
+            "国际科技", "国际经济", "国际军事", "国际综合",
         ]:
             ci = [it for it in items if it.category == cat]
             if not ci: continue
@@ -57,3 +57,4 @@ class Summarizer:
                     items[i].summary = line.strip()[:1200]
         except Exception as e:
             print(f"[LLM/{cat}] 失败: {e}")
+

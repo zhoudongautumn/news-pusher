@@ -5,13 +5,13 @@ PER_SOURCE = 10
 PER_SUBCAT = 8
 
 ALL_CATS = [
-    "国内经济", "国内科技", "国内军事", "国内综合",
-    "国际经济", "国际科技", "国际军事", "国际综合",
+    "国内科技", "国内经济", "国内军事", "国内综合",
+    "国际科技", "国际经济", "国际军事", "国际综合",
 ]
 
 REGIONS = {
-    "国内": ["国内经济", "国内科技", "国内军事", "国内综合"],
-    "国际": ["国际经济", "国际科技", "国际军事", "国际综合"],
+    "国内": ["国内科技", "国内经济", "国内军事", "国内综合"],
+    "国际": ["国际科技", "国际经济", "国际军事", "国际综合"],
 }
 
 RSS_FEEDS = [
@@ -25,16 +25,16 @@ RSS_FEEDS = [
     ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
     ("https://www.theguardian.com/world/rss", "国际综合"),
     ("https://rss.nytimes.com/services/xml/rss/nyt/World.xml", "国际综合"),
-    # === 国际经济 ===
-    ("https://finance.yahoo.com/news/rssindex", "国际经济"),
-    ("https://feeds.marketwatch.com/marketwatch/topstories/", "国际经济"),
-    ("https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114", "国际经济"),
     # === 国际科技 ===
     ("https://feeds.arstechnica.com/arstechnica/index", "国际科技"),
     ("https://www.technologyreview.com/feed/", "国际科技"),
     ("https://www.theverge.com/rss/index.xml", "国际科技"),
     ("https://www.wired.com/feed/rss", "国际科技"),
     ("https://hnrss.org/frontpage", "国际科技"),
+    # === 国际经济 ===
+    ("https://finance.yahoo.com/news/rssindex", "国际经济"),
+    ("https://feeds.marketwatch.com/marketwatch/topstories/", "国际经济"),
+    ("https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114", "国际经济"),
     # === 国际军事 ===
     ("https://www.defensenews.com/arc/outboundfeeds/vdr-cat/?outputType=xml", "国际军事"),
 ]
@@ -43,6 +43,7 @@ ENABLE_HOTLIST = True
 HOTLIST_SOURCES = [
     ("cls", "国内经济"),
     ("eastmoney", "国内经济"),
+    ("sina_finance", "国内经济"),
     ("zhihu", "国内综合"),
     ("baidu", "国内综合"),
 ]
