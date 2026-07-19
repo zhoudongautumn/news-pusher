@@ -23,9 +23,12 @@ RSS_FEEDS = [
     ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
     ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
     ("https://www.theguardian.com/world/rss", "国际综合"),
+    ("https://www.aljazeera.com/xml/rss/all.xml", "国际综合"),
+    ("https://rss.nytimes.com/services/xml/rss/nyt/World.xml", "国际综合"),
     # === 国际经济 ===
     ("https://feeds.marketwatch.com/marketwatch/topstories/", "国际经济"),
     ("https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114", "国际经济"),
+    ("https://feeds.content.dowjones.io/public/rss/mw_topstories", "国际经济"),
     # === 国际科技 ===
     ("https://feeds.arstechnica.com/arstechnica/index", "国际科技"),
     ("https://www.technologyreview.com/feed/", "国际科技"),
@@ -67,3 +70,4 @@ MAIL_TO = os.getenv("MAIL_TO", "")
 FEISHU_WEBHOOK = os.getenv("FEISHU_WEBHOOK", "")
 TG_BOT_TOKEN = os.getenv("TG_BOT_TOKEN", "")
 TG_CHAT_ID = os.getenv("TG_CHAT_ID", "")
+

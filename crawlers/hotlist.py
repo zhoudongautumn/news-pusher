@@ -1,4 +1,4 @@
-﻿"""热搜爬虫 — 六大国内源"""
+﻿"""热搜爬虫 — 六大国内源 + 丰富原文"""
 
 import httpx, re, json
 from urllib.parse import quote
@@ -13,17 +13,13 @@ class HotlistCrawler(BaseCrawler):
         self.sources = sources
         self.per_source = per_source
         self._h = {
-            "zhihu": self._zhihu,
-            "cls": self._cls,
-            "baidu": self._baidu,
-            "sina": self._sina,
-            "eastmoney": self._eastmoney,
-            "thepaper": self._thepaper,
+            "zhihu": self._zhihu, "cls": self._cls, "baidu": self._baidu,
+            "sina": self._sina, "eastmoney": self._eastmoney, "thepaper": self._thepaper,
         }
 
     async def fetch(self) -> list[NewsItem]:
         items = []
-        async with httpx.AsyncClient(timeout=15) as cli:
+        async with httpx.AsyncClient(timeout=15, follow_redirects=True) as cli:
             for name, cat in self.sources:
                 h = self._h.get(name)
                 if not h: continue
@@ -36,7 +32,6 @@ class HotlistCrawler(BaseCrawler):
                     print(f"  [Hotlist/{name}] 失败: {e}")
         return items
 
-    # === 知乎热榜 ===
     async def _zhihu(self, cli):
         url = "https://www.zhihu.com/api/v3/feed/topstory/hot-lists/total?limit=50"
         r = await cli.get(url, headers={"User-Agent": "Mozilla/5.0"})
@@ -46,11 +41,10 @@ class HotlistCrawler(BaseCrawler):
             t = e.get("target", {})
             items.append(NewsItem(
                 title=t.get("title", ""), url=t.get("url", ""),
-                summary=f"热度 {e.get('detail_text','')}", source="知乎热榜",
+                summary=f"知乎热度 {e.get('detail_text','')} | {t.get('excerpt','')}", source="知乎热榜",
             ))
         return items
 
-    # === 财联社电报 ===
     async def _cls(self, cli):
         url = "https://www.cls.cn/api/sw?app=CailianpressWeb&os=web&sv=8.4.6"
         r = await cli.get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.cls.cn/"})
@@ -64,28 +58,28 @@ class HotlistCrawler(BaseCrawler):
             ct = e.get("ctime", 0)
             items.append(NewsItem(
                 title=t, url=f"https://www.cls.cn/detail/{e.get('id','')}",
-                summary=c[:300], source="财联社",
+                summary=c[:500], source="财联社",
                 published=datetime.fromtimestamp(ct) if ct else None,
             ))
         return items
 
-    # === 百度热搜 ===
     async def _baidu(self, cli):
         url = "https://top.baidu.com/board?tab=realtime"
         r = await cli.get(url, headers={"User-Agent": "Mozilla/5.0"})
         html = r.text
         items = []
         words = re.findall(r'"word":"([^"]+)"', html)
+        descs = re.findall(r'"desc":"([^"]*)"', html)
         queries = re.findall(r'"query":"([^"]+)"', html)
         for i, word in enumerate(words[:self.per_source]):
             q = queries[i] if i < len(queries) else word
+            d = descs[i] if i < len(descs) else ""
             items.append(NewsItem(
                 title=word, url=f"https://www.baidu.com/s?wd={quote(q)}",
-                source="百度热搜",
+                summary=f"百度热搜 | {d}", source="百度热搜",
             ))
         return items
 
-    # === 新浪新闻热点 ===
     async def _sina(self, cli):
         url = "https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&k=&num=20"
         r = await cli.get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://news.sina.com.cn/"})
@@ -94,32 +88,24 @@ class HotlistCrawler(BaseCrawler):
         for e in data.get("result", {}).get("data", [])[:self.per_source]:
             items.append(NewsItem(
                 title=e.get("title", ""), url=e.get("url", ""),
-                summary=e.get("intro", "")[:200], source="新浪新闻",
+                summary=e.get("intro", "")[:500], source="新浪新闻",
             ))
         return items
 
-    # === 东方财富快讯 ===
     async def _eastmoney(self, cli):
-        url = "https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f3,f12,f14&secids=1.000001,0.399001"
-        r = await cli.get(url, headers={"User-Agent": "Mozilla/5.0"})
-        # 东方财富新闻 API
-        url2 = "https://np-listapi.eastmoney.com/comm/web/getNewsList?client=web&biz=news_001&page=1&size=20"
-        r2 = await cli.get(url2, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.eastmoney.com/"})
-        try:
-            data = r2.json()
-            items = []
-            news_list = data.get("result", [])
-            for e in news_list[:self.per_source]:
-                items.append(NewsItem(
-                    title=e.get("title", ""),
-                    url=f"https://finance.eastmoney.com/a/{e.get('code','')}.html",
-                    summary=e.get("digest", "")[:200], source="东方财富",
-                ))
-            return items
-        except:
-            return []
+        url = "https://np-listapi.eastmoney.com/comm/web/getNewsList?client=web&biz=news_001&page=1&size=20"
+        r = await cli.get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.eastmoney.com/"})
+        data = r.json()
+        items = []
+        news_list = data.get("result", [])
+        for e in news_list[:self.per_source]:
+            items.append(NewsItem(
+                title=e.get("title", ""),
+                url=f"https://finance.eastmoney.com/a/{e.get('code','')}.html",
+                summary=e.get("digest", "")[:500], source="东方财富",
+            ))
+        return items
 
-    # === 澎湃新闻 ===
     async def _thepaper(self, cli):
         url = "https://www.thepaper.cn/contentapi/cont/list/contentList?pageidx=1&size=20"
         r = await cli.get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.thepaper.cn/"})
@@ -129,6 +115,6 @@ class HotlistCrawler(BaseCrawler):
             items.append(NewsItem(
                 title=e.get("name", ""),
                 url=f"https://www.thepaper.cn/newsDetail_forward_{e.get('contId','')}",
-                summary=e.get("abstract", "")[:200], source="澎湃新闻",
+                summary=e.get("abstract", "")[:500], source="澎湃新闻",
             ))
         return items
