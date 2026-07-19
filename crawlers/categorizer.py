@@ -1,4 +1,4 @@
-"""鍒嗙被鍣?鈥?婧愰鏍囪锛岀粷涓嶈鐩?""
+﻿"""鍒嗙被鍣?鈥?婧愰鏍囪锛岀粷涓嶈鐩?""
 
 from crawlers.base import NewsItem
 

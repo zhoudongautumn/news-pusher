@@ -1,4 +1,4 @@
-"""RSS 爬虫 — 48h 过滤 + 逐源日志"""
+﻿"""RSS 爬虫 — 48h 过滤 + 逐源日志"""
 
 import asyncio, feedparser, html as _html, re
 from datetime import datetime, timedelta, timezone
