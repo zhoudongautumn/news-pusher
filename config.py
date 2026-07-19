@@ -18,6 +18,7 @@ RSS_FEEDS = [
     # === 国内科技 ===
     ("https://www.ithome.com/rss/", "国内科技"),
     ("https://www.36kr.com/feed", "国内科技"),
+    ("https://www.scmp.com/rss/36/feed", "国内科技"),
     # === 国内经济 ===
     ("http://www.chinadaily.com.cn/rss/china_rss.xml", "国内经济"),
     ("https://www.scmp.com/rss/4/feed", "国内经济"),
