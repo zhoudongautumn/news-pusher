@@ -14,38 +14,33 @@ REGIONS = {
     "国际": ["国际经济", "国际科技", "国际军事", "国际综合"],
 }
 
-# 仅保留直连 RSS（不走代理，确保可靠）
 RSS_FEEDS = [
     # === 国内 ===
     ("https://www.ithome.com/rss/", "国内科技"),
     ("https://www.36kr.com/feed", "国内科技"),
+    ("https://feedx.net/rss/people.xml", "国内综合"),
+    ("https://feedx.net/rss/sina.xml", "国内综合"),
     # === 国际综合 ===
     ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
     ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
     ("https://www.theguardian.com/world/rss", "国际综合"),
-    ("https://www.aljazeera.com/xml/rss/all.xml", "国际综合"),
     ("https://rss.nytimes.com/services/xml/rss/nyt/World.xml", "国际综合"),
     # === 国际经济 ===
     ("https://feeds.marketwatch.com/marketwatch/topstories/", "国际经济"),
     ("https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114", "国际经济"),
-    ("https://feeds.content.dowjones.io/public/rss/mw_topstories", "国际经济"),
     # === 国际科技 ===
     ("https://feeds.arstechnica.com/arstechnica/index", "国际科技"),
     ("https://www.technologyreview.com/feed/", "国际科技"),
     ("https://www.theverge.com/rss/index.xml", "国际科技"),
-    ("https://hnrss.org/frontpage", "国际科技"),
     ("https://www.wired.com/feed/rss", "国际科技"),
+    ("https://hnrss.org/frontpage", "国际科技"),
     # === 国际军事 ===
     ("https://www.defensenews.com/arc/outboundfeeds/vdr-cat/?outputType=xml", "国际军事"),
 ]
 
-# 国内源全走爬虫直连 API（不走 RSS 代理）
 ENABLE_HOTLIST = True
 HOTLIST_SOURCES = [
     ("cls", "国内经济"),
-    ("eastmoney", "国内经济"),
-    ("sina", "国内综合"),
-    ("thepaper", "国内综合"),
     ("zhihu", "国内综合"),
     ("baidu", "国内综合"),
 ]
@@ -70,4 +65,3 @@ MAIL_TO = os.getenv("MAIL_TO", "")
 FEISHU_WEBHOOK = os.getenv("FEISHU_WEBHOOK", "")
 TG_BOT_TOKEN = os.getenv("TG_BOT_TOKEN", "")
 TG_CHAT_ID = os.getenv("TG_CHAT_ID", "")
-
