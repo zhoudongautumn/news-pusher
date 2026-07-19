@@ -42,7 +42,7 @@ RSS_FEEDS = [
 ENABLE_HOTLIST = True
 HOTLIST_SOURCES = [
     ("cls", "国内经济"),
-    ("eastmoney", "国内经济"),
+    ("eastmoney", "国内经济",`r`n    ("sina_finance", "国内经济"),),
     ("zhihu", "国内综合"),
     ("baidu", "国内综合"),
 ]
