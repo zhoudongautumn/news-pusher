@@ -26,6 +26,7 @@ RSS_FEEDS = [
     ("https://www.theguardian.com/world/rss", "国际综合"),
     ("https://rss.nytimes.com/services/xml/rss/nyt/World.xml", "国际综合"),
     # === 国际经济 ===
+    ("https://finance.yahoo.com/news/rssindex", "国际经济"),
     ("https://feeds.marketwatch.com/marketwatch/topstories/", "国际经济"),
     ("https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114", "国际经济"),
     # === 国际科技 ===
@@ -41,6 +42,7 @@ RSS_FEEDS = [
 ENABLE_HOTLIST = True
 HOTLIST_SOURCES = [
     ("cls", "国内经济"),
+    ("eastmoney", "国内经济"),
     ("zhihu", "国内综合"),
     ("baidu", "国内综合"),
 ]

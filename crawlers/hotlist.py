@@ -1,7 +1,8 @@
-﻿"""热搜爬虫 — 知乎/财联社/百度（三稳源）"""
+"""热搜爬虫 — 知乎/财联社/百度/东方财富（四稳源）"""
 
 import httpx, re
 from urllib.parse import quote
+import json
 from datetime import datetime
 from .base import BaseCrawler, NewsItem
 
@@ -16,6 +17,7 @@ class HotlistCrawler(BaseCrawler):
             "zhihu": self._zhihu,
             "cls": self._cls,
             "baidu": self._baidu,
+            "eastmoney": self._eastmoney,
         }
 
     async def fetch(self) -> list[NewsItem]:
@@ -77,4 +79,35 @@ class HotlistCrawler(BaseCrawler):
                 title=word, url=f"https://www.baidu.com/s?wd={quote(q)}",
                 source="百度热搜",
             ))
+        return items
+
+    async def _eastmoney(self, cli):
+        """东方财富 24h 热榜 — 国内财经核心源"""
+        url = "https://np-listapi.eastmoney.com/comm/web/getNewsByDictCId"
+        params = {"client": "web", "bizClass": "news", "pageIndex": 1, "pageSize": self.per_source}
+        try:
+            r = await cli.get(url, params=params,
+                headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.eastmoney.com/"})
+            data = r.json()
+            items = []
+            entries = data.get("result", {}).get("newsData", []) or data.get("result", [])
+            if isinstance(entries, dict):
+                entries = entries.get("data", []) or []
+            if not isinstance(entries, list):
+                entries = []
+            for e in entries[:self.per_source]:
+                title = e.get("title", "") or e.get("newsTitle", "")
+                if not title:
+                    continue
+                summary = e.get("brief", "") or e.get("newsDigest", "") or ""
+                news_id = e.get("newsId", "") or e.get("newsCode", "")
+                items.append(NewsItem(
+                    title=title,
+                    url=f"https://finance.eastmoney.com/a/{news_id}.html",
+                    summary=summary[:300],
+                    source="东方财富",
+                ))
+        except Exception as e:
+            print(f"  [Hotlist/eastmoney] 失败: {e}")
+            return []
         return items
