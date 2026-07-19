@@ -1,4 +1,4 @@
-name: 📰 新闻早报/午报推送
+﻿name: 📰 新闻早报/午报推送
 
 on:
   schedule:
@@ -20,14 +20,12 @@ jobs:
         env:
           REGION: domestic
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
-          WECOM_WEBHOOK: ${{ secrets.WECOM_WEBHOOK }}
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
         run: python main.py
 
   international:
     runs-on: ubuntu-latest
-    needs: domestic
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -39,7 +37,6 @@ jobs:
         env:
           REGION: international
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
-          WECOM_WEBHOOK: ${{ secrets.WECOM_WEBHOOK }}
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
         run: python main.py
