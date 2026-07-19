@@ -15,14 +15,11 @@ REGIONS = {
 }
 
 RSS_FEEDS = [
-    # === 国内科技 ===
+    # === 国内 ===
     ("https://www.ithome.com/rss/", "国内科技"),
     ("https://www.36kr.com/feed", "国内科技"),
-    # === 国内综合 ===
     ("https://feedx.net/rss/people.xml", "国内综合"),
     ("https://feedx.net/rss/sina.xml", "国内综合"),
-    # === 国内经济 (海外CDN,已验证快速) ===
-    ("http://www.chinadaily.com.cn/rss/china_rss.xml", "国内经济"),
     # === 国际综合 ===
     ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
     ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
@@ -46,6 +43,7 @@ ENABLE_HOTLIST = True
 HOTLIST_SOURCES = [
     ("cls", "国内经济"),
     ("eastmoney", "国内经济"),
+    ("sina_finance", "国内经济"),
     ("zhihu", "国内综合"),
     ("baidu", "国内综合"),
 ]
