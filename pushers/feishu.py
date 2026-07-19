@@ -6,8 +6,8 @@ import pytz
 from crawlers.base import NewsItem
 
 LAYOUT = [
-    ("国内", ["国内科技", "国内经济", "国内军事", "国内综合"]),
-    ("国际", ["国际科技", "国际经济", "国际军事", "国际综合"]),
+    ("国内", ["国内经济", "国内科技", "国内军事", "国内综合"]),
+    ("国际", ["国际经济", "国际科技", "国际军事", "国际综合"]),
 ]
 
 ICONS = {
@@ -63,4 +63,3 @@ class FeishuPusher:
                     print(f"[Feishu] err {d}")
             else:
                 print(f"[Feishu] HTTP {r.status_code}")
-
