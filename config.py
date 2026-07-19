@@ -15,41 +15,48 @@ REGIONS = {
 }
 
 RSS_FEEDS = [
-    # ========== 国内科技 ==========
+    # === 国内科技 ===
     ("https://www.ithome.com/rss/", "国内科技"),
     ("https://www.36kr.com/feed", "国内科技"),
     ("https://www.scmp.com/rss/36/feed", "国内科技"),
-    # ========== 国内经济 ==========
+    # === 国内经济 (国际版RSS,海外可达) ===
     ("https://www.scmp.com/rss/4/feed", "国内经济"),
     ("https://www.scmp.com/rss/11/feed", "国内经济"),
-    # ========== 国内综合 ==========
+    # === 国内综合 ===
+    ("https://feedx.net/rss/people.xml", "国内综合"),
+    ("https://feedx.net/rss/sina.xml", "国内综合"),
     ("https://www.scmp.com/rss/3/feed", "国内综合"),
     ("http://www.chinadaily.com.cn/rss/china_rss.xml", "国内综合"),
     ("https://www.cgtn.com/subscribe/rss/section/world.xml", "国内综合"),
     ("http://www.xinhuanet.com/english/rss/worldrss.xml", "国内综合"),
-    # ========== 国内军事 ==========
+    # === 国内军事 ===
     ("https://thediplomat.com/feed/", "国内军事"),
-    # ========== 国际科技 ==========
+    # === 国际综合 ===
+    ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
+    ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
+    ("https://www.theguardian.com/world/rss", "国际综合"),
+    ("https://rss.nytimes.com/services/xml/rss/nyt/World.xml", "国际综合"),
+    # === 国际科技 ===
     ("https://feeds.arstechnica.com/arstechnica/index", "国际科技"),
     ("https://www.technologyreview.com/feed/", "国际科技"),
     ("https://www.theverge.com/rss/index.xml", "国际科技"),
     ("https://www.wired.com/feed/rss", "国际科技"),
     ("https://hnrss.org/frontpage", "国际科技"),
-    # ========== 国际经济 ==========
+    # === 国际经济 ===
     ("https://finance.yahoo.com/news/rssindex", "国际经济"),
     ("https://feeds.marketwatch.com/marketwatch/topstories/", "国际经济"),
     ("https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114", "国际经济"),
-    # ========== 国际综合 ==========
-    ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
-    ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
-    ("https://www.theguardian.com/world/rss", "国际综合"),
-    ("https://rss.nytimes.com/services/xml/rss/nyt/World.xml", "国际综合"),
-    # ========== 国际军事 ==========
+    # === 国际军事 ===
     ("https://www.defensenews.com/arc/outboundfeeds/vdr-cat/?outputType=xml", "国际军事"),
 ]
 
-ENABLE_HOTLIST = False
-HOTLIST_SOURCES = []
+ENABLE_HOTLIST = True
+HOTLIST_SOURCES = [
+    ("cls", "国内经济"),
+    ("eastmoney", "国内经济"),
+    ("zhihu", "国内综合"),
+    ("baidu", "国内综合"),
+]
 
 ENABLE_RSS = True
 
