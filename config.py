@@ -18,9 +18,8 @@ RSS_FEEDS = [
     # === 国内科技 ===
     ("https://www.ithome.com/rss/", "国内科技"),
     ("https://www.36kr.com/feed", "国内科技"),
-    # === 国内经济 (RSS — 不受海外IP限制) ===
-    ("https://feedx.net/rss/cls.xml", "国内经济"),
-    ("https://feedx.net/rss/eastmoney.xml", "国内经济"),
+    # === 国内经济 (RSS 海外可达) ===
+    ("https://www.scmp.com/rss/4/feed", "国内经济"),
     # === 国内综合 ===
     ("https://feedx.net/rss/people.xml", "国内综合"),
     ("https://feedx.net/rss/sina.xml", "国内综合"),
