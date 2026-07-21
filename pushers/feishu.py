@@ -1,4 +1,4 @@
-"""飞书推送 - 纯文本稳定版"""
+"""飞书推送 - 纯文本稳定版 + 早晚区分"""
 
 import httpx
 from datetime import datetime
@@ -12,11 +12,9 @@ LAYOUT = [
 
 ICONS = {
     "经济": "💰", "科技": "🔬", "军事": "🛡️", "综合": "📋",
+    "中国经济": "🇨🇳💰",
     "国内": "🇨🇳", "国际": "🌍",
-    "中国经济": "🇨🇳",
 }
-
-ICON_LABEL = {"中国经济": "💰 中国经济(英文源)"}
 
 
 class FeishuPusher:
@@ -26,12 +24,13 @@ class FeishuPusher:
         if not items or not self.w:
             return
         now = datetime.now(pytz.timezone("Asia/Shanghai"))
-        emoji = "☀️" if now.hour < 12 else "🌤"
-        subtitle = "晨报" if now.hour < 12 else "午报"
+        is_morning = now.hour < 12
+        emoji = "☀️" if is_morning else "🌤"
+        subtitle = "晨报" if is_morning else "午报"
+        date_str = now.strftime("%Y-%m-%d %A")
 
-        lines = [f"{emoji} 每日{subtitle} | {now.strftime('%Y-%m-%d %A')}", ""]
+        lines = [f"{emoji} 每日{subtitle} | {date_str}", ""]
         idx = 0
-
         for region, cats in LAYOUT:
             r_items = [it for it in items if it.category in cats]
             if not r_items:
@@ -41,9 +40,11 @@ class FeishuPusher:
                 ci = [it for it in r_items if it.category == cat]
                 if not ci:
                     continue
-                sub = cat[2:] if cat not in ICON_LABEL else ICON_LABEL[cat]
-                label = ICON_LABEL.get(cat, f"  {ICONS.get(sub, '')} {sub}")
-                lines.append(label if cat in ICON_LABEL else f"  {ICONS.get(sub, '')} {sub}")
+                if cat == "中国经济":
+                    lines.append(f"  {ICONS.get(cat, '')} 中国经济(英文源)")
+                else:
+                    sub = cat[2:]
+                    lines.append(f"  {ICONS.get(sub, '')} {sub}")
                 for it in ci:
                     idx += 1
                     lines.append(f"  {idx}. {it.title}")
