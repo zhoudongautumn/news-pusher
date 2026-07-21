@@ -1,14 +1,13 @@
-"""飞书推送 - 纯文本稳定版 + 早晚区分"""
+﻿"""飞书推送 — 纯文本稳定版 + 早晚区分"""
 
 import httpx
 from datetime import datetime
 import pytz
 from crawlers.base import NewsItem
 
-# ORDER: tech -> econ -> military -> general
 LAYOUT = [
-    ("国内", ["国内科技", "国内经济", "国内军事", "国内综合"]),
-    ("国际", ["国际科技", "国际经济", "国际军事", "国际综合"]),
+    ("国内", ["国内经济", "国内科技", "国内军事", "国内综合"]),
+    ("国际", ["国际经济", "国际科技", "国际军事", "国际综合"]),
 ]
 
 ICONS = {
@@ -20,8 +19,9 @@ ICONS = {
 class FeishuPusher:
     def __init__(self, w: str): self.w = w
 
-    async def push(self, items, title: str = ""):
+    async def push(self, items: list[NewsItem], title: str = ""):
         if not items or not self.w: return
+
         now = datetime.now(pytz.timezone("Asia/Shanghai"))
         is_morning = now.hour < 12
         emoji = "☀️" if is_morning else "🌤"
@@ -30,15 +30,14 @@ class FeishuPusher:
 
         lines = [f"{emoji} 每日{subtitle} | {date_str}", ""]
         idx = 0
+
         for region, cats in LAYOUT:
             r_items = [it for it in items if it.category in cats]
-            if not r_items:
-                continue
+            if not r_items: continue
             lines.append(f"━━━ {ICONS.get(region, '')} {region} ━━━")
             for cat in cats:
                 ci = [it for it in r_items if it.category == cat]
-                if not ci:
-                    continue
+                if not ci: continue
                 sub = cat[2:]
                 lines.append(f"  {ICONS.get(sub, '')} {sub}")
                 for it in ci:
@@ -51,8 +50,7 @@ class FeishuPusher:
                     lines.append("")
 
         body = "\n".join(lines)
-        if len(body) > 18000:
-            body = body[:18000] + "\n...(截断)"
+        if len(body) > 18000: body = body[:18000] + "\n...(截断)"
 
         payload = {"msg_type": "text", "content": {"text": body}}
         async with httpx.AsyncClient(timeout=10) as c:

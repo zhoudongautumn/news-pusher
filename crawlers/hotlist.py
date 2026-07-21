@@ -17,7 +17,7 @@ class HotlistCrawler(BaseCrawler):
             "zhihu": self._zhihu,
             "cls": self._cls,
             "baidu": self._baidu,
-            "eastmoney": self._eastmoney,`r`n            "sina_finance": self._sina_finance,
+            "eastmoney": self._eastmoney,
         }
 
     async def fetch(self) -> list[NewsItem]:
@@ -109,32 +109,5 @@ class HotlistCrawler(BaseCrawler):
                 ))
         except Exception as e:
             print(f"  [Hotlist/eastmoney] 失败: {e}")
-            return []
-        return items
-    async def _sina_finance(self, cli):
-        url = "https://feed.mix.sina.com.cn/api/roll/get"
-        params = {"pageid": 153, "lid": 2509, "k": "", "num": self.per_source, "page": 1}
-        try:
-            r = await cli.get(url, params=params,
-                headers={"User-Agent": "Mozilla/5.0", "Referer": "https://finance.sina.com.cn/"})
-            data = r.json()
-            items = []
-            entries = data.get("result", {}).get("data", [])
-            if not isinstance(entries, list):
-                entries = []
-            for e in entries[:self.per_source]:
-                title = e.get("title", "") or e.get("intro", "")
-                if not title:
-                    continue
-                summary = e.get("intro", "") or e.get("summary", "") or ""
-                url_link = e.get("url", "") or e.get("link", "")
-                items.append(NewsItem(
-                    title=title,
-                    url=url_link,
-                    summary=summary[:300],
-                    source="新浪财经",
-                ))
-        except Exception as e:
-            print(f"  [Hotlist/sina_finance] 失败: {e}")
             return []
         return items

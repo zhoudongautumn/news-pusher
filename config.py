@@ -15,21 +15,20 @@ REGIONS = {
 }
 
 RSS_FEEDS = [
-    # === 国内科技 ===
+    # === 国内 ===
     ("https://www.ithome.com/rss/", "国内科技"),
     ("https://www.36kr.com/feed", "国内科技"),
     ("https://www.scmp.com/rss/36/feed", "国内科技"),
+    ("https://feedx.net/rss/people.xml", "国内综合"),
+    ("https://feedx.net/rss/sina.xml", "国内综合"),
+    ("https://www.cgtn.com/subscribe/rss/section/world.xml", "国内综合"),
+    ("http://www.xinhuanet.com/english/rss/worldrss.xml", "国内综合"),
+    ("https://www.scmp.com/rss/3/feed", "国内综合"),
     # === 国内经济 ===
     ("http://www.chinadaily.com.cn/rss/china_rss.xml", "国内经济"),
     ("https://www.scmp.com/rss/4/feed", "国内经济"),
     # === 国内军事 ===
     ("https://thediplomat.com/feed/", "国内军事"),
-    # === 国内综合 ===
-    ("https://feedx.net/rss/people.xml", "国内综合"),
-    ("https://feedx.net/rss/sina.xml", "国内综合"),
-    ("https://www.cgtn.com/subscribe/rss/section/world.xml", "国内综合"),
-    ("http://www.xinhuanet.com/english/rss/worldrss.xml", "国内综合"
-    ("https://www.scmp.com/rss/3/feed", "国内综合"),
     # === 国际综合 ===
     ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
     ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
