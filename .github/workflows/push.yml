@@ -1,4 +1,4 @@
-﻿name: 📰 新闻早报/午报推送
+name: 📰 新闻早报/午报推送
 
 on:
   schedule:
