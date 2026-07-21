@@ -1,4 +1,4 @@
-"""飞书推送 - 纯文本稳定版 + 早晚区分"""
+"""飞书推送 - 纯文本稳定版"""
 
 import httpx
 from datetime import datetime
@@ -12,7 +12,7 @@ LAYOUT = [
 
 ICONS = {
     "经济": "💰", "科技": "🔬", "军事": "🛡️", "综合": "📋",
-    "中国经济", "中国军事": "🇨🇳💰",
+    "中国经济": "🇨🇳💰", "中国军事": "🇨🇳🛡️",
     "国内": "🇨🇳", "国际": "🌍",
 }
 
@@ -24,12 +24,9 @@ class FeishuPusher:
         if not items or not self.w:
             return
         now = datetime.now(pytz.timezone("Asia/Shanghai"))
-        is_morning = now.hour < 12
-        emoji = "☀️" if is_morning else "🌤"
-        subtitle = "晨报" if is_morning else "午报"
-        date_str = now.strftime("%Y-%m-%d %A")
-
-        lines = [f"{emoji} 每日{subtitle} | {date_str}", ""]
+        emoji = "☀️" if now.hour < 12 else "🌤"
+        subtitle = "晨报" if now.hour < 12 else "午报"
+        lines = [f"{emoji} 每日{subtitle} | {now.strftime('%Y-%m-%d %A')}", ""]
         idx = 0
         for region, cats in LAYOUT:
             r_items = [it for it in items if it.category in cats]
@@ -40,8 +37,10 @@ class FeishuPusher:
                 ci = [it for it in r_items if it.category == cat]
                 if not ci:
                     continue
-                if cat == "中国经济", "中国军事":
-                    lines.append(f"  {ICONS.get(cat, '')} 中国经济(英文源)")
+                if cat == "中国经济":
+                    lines.append(f"  🇨🇳💰 中国经济(英文源)")
+                elif cat == "中国军事":
+                    lines.append(f"  🇨🇳🛡️ 中国军事(英文源)")
                 else:
                     sub = cat[2:]
                     lines.append(f"  {ICONS.get(sub, '')} {sub}")
@@ -53,11 +52,9 @@ class FeishuPusher:
                     if it.url:
                         lines.append(f"     🔗 {it.url}")
                     lines.append("")
-
         body = "\n".join(lines)
         if len(body) > 18000:
             body = body[:18000] + "\n...(截断)"
-
         payload = {"msg_type": "text", "content": {"text": body}}
         async with httpx.AsyncClient(timeout=10) as c:
             r = await c.post(self.w, json=payload)
