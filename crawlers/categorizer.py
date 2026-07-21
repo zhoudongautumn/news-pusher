@@ -42,10 +42,7 @@ def _keyword_sub(text: str) -> str:
 
 def select_top(items: list[NewsItem], per: int = 8) -> list[NewsItem]:
     result = []
-    for cat in [
-        ("国内科技", "国内军事", "国内综合", "国际科技", "国际经济", "国际军事", "国际综合",
-        "中国经济"),
-    ]:
+    for cat in ["国内科技", "国内军事", "国内综合", "国际科技", "国际经济", "国际军事", "国际综合", "中国经济"]:
         ci = [it for it in items if it.category == cat]
         result.extend(ci[:per])
         print(f"  [{cat}] {len(ci)} 条, 精选 {min(len(ci), per)} 条")
