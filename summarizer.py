@@ -14,7 +14,8 @@ class Summarizer:
     async def summarize(self, items: list[NewsItem]) -> list[NewsItem]:
         if not items: return items
         for cat in [
-            "国内科技", "国内军事", "国内综合", "国际科技", "国际经济", "国际军事", "国际综合", "中国经济",
+            "国内科技", "国内综合", "国际科技", "国际经济", "国际军事", "国际综合", "中国经济",
+            "中国军事",
         ]:
             ci = [it for it in items if it.category == cat]
             if not ci: continue

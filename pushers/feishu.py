@@ -6,13 +6,13 @@ import pytz
 from crawlers.base import NewsItem
 
 LAYOUT = [
-    ("国内", ["国内科技", "国内军事", "国内综合"]),
-    ("国际", ["国际科技", "国际经济", "国际军事", "国际综合", "中国经济"]),
+    ("国内", ["国内科技", "国内综合"]),
+    ("国际", ["国际科技", "国际经济", "国际军事", "国际综合", "中国经济", "中国军事"]),
 ]
 
 ICONS = {
     "经济": "💰", "科技": "🔬", "军事": "🛡️", "综合": "📋",
-    "中国经济": "🇨🇳💰",
+    "中国经济", "中国军事": "🇨🇳💰",
     "国内": "🇨🇳", "国际": "🌍",
 }
 
@@ -40,7 +40,7 @@ class FeishuPusher:
                 ci = [it for it in r_items if it.category == cat]
                 if not ci:
                     continue
-                if cat == "中国经济":
+                if cat == "中国经济", "中国军事":
                     lines.append(f"  {ICONS.get(cat, '')} 中国经济(英文源)")
                 else:
                     sub = cat[2:]

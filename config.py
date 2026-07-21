@@ -2,17 +2,19 @@ import os
 
 TIMEZONE = "Asia/Shanghai"
 PER_SOURCE = 10
-PER_SUBCAT = 8
+PER_SUBCAT = 3
 
 ALL_CATS = [
-    "国内科技", "国内军事", "国内综合",
+    "国内科技", "国内综合",
     "国际科技", "国际经济", "国际军事", "国际综合",
     "中国经济",
+    "中国军事",
 ]
 
 REGIONS = {
-    "国内": ["国内科技", "国内军事", "国内综合"],
-    "国际": ["国际科技", "国际经济", "国际军事", "国际综合", "中国经济"],
+    "国内": ["国内科技", "国内综合"],
+    "国际": ["国际科技", "国际经济", "国际军事", "国际综合", "中国经济",
+    "中国军事"],
 }
 
 RSS_FEEDS = [
@@ -29,8 +31,10 @@ RSS_FEEDS = [
     # === 国内军事 ===
     ("https://thediplomat.com/feed/", "国内军事"),
     # === 中国经济(英文源,国际板块底部展示) ===
-    ("http://www.chinadaily.com.cn/rss/china_rss.xml", "中国经济"),
-    ("https://www.scmp.com/rss/4/feed", "中国经济"),
+    ("http://www.chinadaily.com.cn/rss/china_rss.xml", "中国经济",
+    "中国军事"),
+    ("https://www.scmp.com/rss/4/feed", "中国经济",
+    "中国军事"),
     # === 国际综合 ===
     ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
     ("https://feeds.npr.org/1004/rss.xml", "国际综合"),

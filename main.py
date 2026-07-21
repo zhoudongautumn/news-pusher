@@ -27,13 +27,13 @@ async def main():
     if REGION == "domestic":
         all_feeds = [(u, c) for u, c in all_feeds if c.startswith("国内")]
     elif REGION == "international":
-        all_feeds = [(u, c) for u, c in all_feeds if c.startswith("国际") or c == "中国经济"]
+        all_feeds = [(u, c) for u, c in all_feeds if c.startswith("国际") or c in ("中国经济", "中国军事")]
 
     hotlist_srcs = config.HOTLIST_SOURCES
     if REGION == "domestic":
         hotlist_srcs = [(n, c) for n, c in hotlist_srcs if c.startswith("国内")]
     elif REGION == "international":
-        hotlist_srcs = [(n, c) for n, c in hotlist_srcs if c.startswith("国际") or c == "中国经济"]
+        hotlist_srcs = [(n, c) for n, c in hotlist_srcs if c.startswith("国际") or c in ("中国经济", "中国军事")]
 
     print("🌐 抓取...")
     tasks = []
