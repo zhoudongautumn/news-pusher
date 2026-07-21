@@ -13,8 +13,7 @@ ALL_CATS = [
 
 REGIONS = {
     "国内": ["国内科技", "国内综合"],
-    "国际": ["国际科技", "国际经济", "国际军事", "国际综合", "中国经济",
-    "中国军事"],
+    "国际": ["国际科技", "国际经济", "国际军事", "国际综合", "中国经济", "中国军事"],
 }
 
 RSS_FEEDS = [
@@ -28,13 +27,11 @@ RSS_FEEDS = [
     ("https://www.cgtn.com/subscribe/rss/section/world.xml", "国内综合"),
     ("http://www.xinhuanet.com/english/rss/worldrss.xml", "国内综合"),
     ("https://www.scmp.com/rss/3/feed", "国内综合"),
-    # === 国内军事 ===
-    ("https://thediplomat.com/feed/", "国内军事"),
+    # === 中国军事(英文源) ===
+    ("https://thediplomat.com/feed/", "中国军事"),
     # === 中国经济(英文源,国际板块底部展示) ===
-    ("http://www.chinadaily.com.cn/rss/china_rss.xml", "中国经济",
-    "中国军事"),
-    ("https://www.scmp.com/rss/4/feed", "中国经济",
-    "中国军事"),
+    ("http://www.chinadaily.com.cn/rss/china_rss.xml", "中国经济"),
+    ("https://www.scmp.com/rss/4/feed", "中国经济"),
     # === 国际综合 ===
     ("http://feeds.bbci.co.uk/news/world/rss.xml", "国际综合"),
     ("https://feeds.npr.org/1004/rss.xml", "国际综合"),
