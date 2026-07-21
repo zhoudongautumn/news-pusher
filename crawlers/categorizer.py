@@ -40,11 +40,13 @@ def _keyword_sub(text: str) -> str:
     return "综合"
 
 
-def select_top(items: list[NewsItem], per: int = 8) -> list[NewsItem]:
+def select_top(items: list[NewsItem], per_cat: dict = None) -> list[NewsItem]:
     result = []
-    for cat in ["国内科技", "国内综合", "国际科技", "国际经济", "国际军事", "国际综合", "中国经济",
-        "中国军事"]:
+    cats_order = ["国内科技", "国内综合", "国际科技", "国际经济", "国际军事", "国际综合", "中国经济",
+        "中国军事"]
+    for cat in cats_order:
+        n = (per_cat or {}).get(cat, 8)
         ci = [it for it in items if it.category == cat]
-        result.extend(ci[:per])
-        print(f"  [{cat}] {len(ci)} 条, 精选 {min(len(ci), per)} 条")
+        result.extend(ci[:n])
+        print(f"  [{cat}] {len(ci)} 条, 精选 {min(len(ci), n)} 条")
     return result

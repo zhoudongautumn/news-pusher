@@ -2,7 +2,11 @@ import os
 
 TIMEZONE = "Asia/Shanghai"
 PER_SOURCE = 10
-PER_SUBCAT = 3
+PER_CAT = {
+    "国内科技": 5, "国际科技": 5,
+    "国际经济": 5, "中国经济": 5,
+    "国内综合": 4, "国际军事": 4, "国际综合": 4, "中国军事": 4,
+}
 
 ALL_CATS = [
     "国内科技", "国内综合",

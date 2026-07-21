@@ -66,8 +66,8 @@ async def main():
         c = sum(1 for it in items if it.category == cat)
         if c: print(f"   [{cat}] {c} 条")
 
-    print(f"✨ 精选 Top {config.PER_SUBCAT}...")
-    items = select_top(items, config.PER_SUBCAT)
+    print("✨ 按分类精选...")
+    items = select_top(items, config.PER_CAT)
     print(f"   精选后 {len(items)} 条")
 
     if config.ENABLE_SUMMARY and config.LLM_API_KEY:
