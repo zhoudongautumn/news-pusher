@@ -1,4 +1,4 @@
-﻿"""新闻推送 — 按区域分别推送"""
+"""新闻推送 — 按区域分别推送"""
 
 import asyncio, os, sys
 from datetime import datetime
@@ -27,13 +27,13 @@ async def main():
     if REGION == "domestic":
         all_feeds = [(u, c) for u, c in all_feeds if c.startswith("国内")]
     elif REGION == "international":
-        all_feeds = [(u, c) for u, c in all_feeds if c.startswith("国际")]
+        all_feeds = [(u, c) for u, c in all_feeds if c.startswith("国际") or c == "中国经济"]
 
     hotlist_srcs = config.HOTLIST_SOURCES
     if REGION == "domestic":
         hotlist_srcs = [(n, c) for n, c in hotlist_srcs if c.startswith("国内")]
     elif REGION == "international":
-        hotlist_srcs = [(n, c) for n, c in hotlist_srcs if c.startswith("国际")]
+        hotlist_srcs = [(n, c) for n, c in hotlist_srcs if c.startswith("国际") or c == "中国经济"]
 
     print("🌐 抓取...")
     tasks = []
